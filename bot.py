@@ -1,6 +1,5 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackContext
-import requests
 
 # إعداد المعلومات الأساسية
 TOKEN = "7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk"  # التوكن الخاص بالبوت
@@ -8,21 +7,15 @@ CHANNEL_LINK = "https://t.me/+xUCQE-w8QCszZTAy"  # رابط الدعوة للق�
 REFERRAL_LINK = "https://t.me/DurovCapsBot/caps?startapp=374668608"  # رابط الإحالة
 ADMIN_ID = "6169753913"  # معرف الأدمن
 
-# قائمة المستخدمين الذين تم إخطار الأدمن عنهم
-notified_users = set()
-
-# وظيفة التحقق من الاشتراك
-def is_user_subscribed(user_id):
-    # القناة خاصة، لذلك لا يمكن التحقق من الاشتراك باستخدام API
-    # المستخدم يعتبر غير مشترك افتراضيًا إلا إذا طلب الانضمام
-    return False
+# قائمة المستخدمين الذين أكملوا الاشتراك
+subscribed_users = set()
 
 # وظيفة بدء البوت
 async def start(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
     user_name = update.effective_user.username or update.effective_user.first_name or "User"
 
-    if not is_user_subscribed(user_id) and user_id not in notified_users:
+    if user_id not in subscribed_users:
         # إذا لم يكن المستخدم مشتركًا، إرسال رسالة تطلب الاشتراك باللغتين
         keyboard = [[InlineKeyboardButton("🔗 اضغط للاشتراك في القناة | Join the Channel", url=CHANNEL_LINK)]]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -38,7 +31,10 @@ async def start(update: Update, context: CallbackContext):
         )
         return  # إنهاء الوظيفة إذا لم يكن المستخدم مشتركًا
 
-    # إذا كان المستخدم مشتركًا، إرسال الرسالة مع الأزرار
+    # إضافة المستخدم إلى قائمة المشتركين
+    subscribed_users.add(user_id)
+
+    # إرسال الرسالة مع الأزرار
     keyboard = [
         [InlineKeyboardButton("Let’s Go", url=REFERRAL_LINK)],
         [InlineKeyboardButton("Join the Channel", url=CHANNEL_LINK)]
@@ -53,9 +49,9 @@ async def start(update: Update, context: CallbackContext):
     )
 
     # إرسال إشعار إلى الأدمن عند دخول مستخدم جديد لأول مرة
-    if user_id not in notified_users:
-        notified_users.add(user_id)
-        total_users = len(notified_users)
+    if user_id not in subscribed_users:
+        subscribed_users.add(user_id)
+        total_users = len(subscribed_users)
         await context.bot.send_message(
             chat_id=ADMIN_ID,
             text=f"🚨 مستخدم جديد دخل البوت لأول مرة:\n\n"
