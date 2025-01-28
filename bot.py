@@ -3,13 +3,13 @@ from telegram.ext import Application, CommandHandler, CallbackContext
 import requests
 import os
 
-# التوكن، رابط القناة، رابط الإحالة ومعرف الأدمن من متغيرات البيئة
-TOKEN = os.getenv("BOT_TOKEN")
-CHANNEL_ID = os.getenv("CHANNEL_ID")
-REFERRAL_LINK = os.getenv("REFERRAL_LINK")
-ADMIN_ID = os.getenv("ADMIN_ID")
+# إعداد المعلومات الأساسية
+TOKEN = "7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk"  # التوكن الخاص بالبوت
+CHANNEL_ID = "+Sy18bATvBtg5ODgy"  # معرف القناة للاشتراك الإجباري
+REFERRAL_LINK = "https://t.me/DurovCapsBot/caps?startapp=374668608"  # رابط الإحالة
+ADMIN_ID = "6169753913"  # معرف الأدمن
 
-# قائمة المستخدمين الذين تم إخطارك عنهم
+# قائمة المستخدمين الذين تم إخطار الأدمن عنهم
 notified_users = set()
 
 # وظيفة التحقق من الاشتراك
@@ -25,7 +25,7 @@ def start(update: Update, context: CallbackContext):
     user_name = update.effective_user.username or "Unknown"
 
     if not is_user_subscribed(user_id):
-        # رسالة الاشتراك الإجباري
+        # إذا لم يكن المستخدم مشتركًا، إرسال رسالة تطلب الاشتراك
         keyboard = [[InlineKeyboardButton("اشترك الآن 📢", url=f"https://t.me/{CHANNEL_ID}")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         update.message.reply_text(
@@ -33,7 +33,7 @@ def start(update: Update, context: CallbackContext):
             reply_markup=reply_markup
         )
     else:
-        # إرسال رسالة تحفيزية
+        # إذا كان المستخدم مشتركًا، إرسال رسالة تحفيزية
         update.message.reply_text(
             f"🎉 شكرًا لاشتراكك!\n\nهيا ابدأ الربح الآن:\n{REFERRAL_LINK}"
         )
@@ -48,7 +48,7 @@ def start(update: Update, context: CallbackContext):
 
 # الإعداد الرئيسي للبوت
 def main():
-    # استخدم Application بدلاً من Updater
+    # إنشاء تطبيق البوت
     application = Application.builder().token(TOKEN).build()
 
     # إضافة وظيفة /start
