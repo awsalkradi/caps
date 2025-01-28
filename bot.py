@@ -1,18 +1,12 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackContext
+from telegram.ext import Application, CommandHandler, CallbackContext
 import requests
 import os
 
-# التوكن الخاص بالبوت من متغيرات البيئة
+# التوكن، رابط القناة، رابط الإحالة ومعرف الأدمن من متغيرات البيئة
 TOKEN = os.getenv("BOT_TOKEN")
-
-# معرف القناة بدون @
 CHANNEL_ID = os.getenv("CHANNEL_ID")
-
-# رابط الإحالة
 REFERRAL_LINK = os.getenv("REFERRAL_LINK")
-
-# معرف الأدمن
 ADMIN_ID = os.getenv("ADMIN_ID")
 
 # قائمة المستخدمين الذين تم إخطارك عنهم
@@ -54,15 +48,14 @@ def start(update: Update, context: CallbackContext):
 
 # الإعداد الرئيسي للبوت
 def main():
-    updater = Updater(TOKEN)
-    dispatcher = updater.dispatcher
+    # استخدم Application بدلاً من Updater
+    application = Application.builder().token(TOKEN).build()
 
     # إضافة وظيفة /start
-    dispatcher.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("start", start))
 
     # تشغيل البوت
-    updater.start_polling()
-    updater.idle()
+    application.run_polling()
 
 if __name__ == "__main__":
     main()
