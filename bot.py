@@ -3,7 +3,7 @@ from telegram.ext import Application, CommandHandler, CallbackContext
 
 # إعداد المعلومات الأساسية
 TOKEN = "7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk"  # التوكن الخاص بالبوت
-CHANNEL_LINK = "https://t.me/+xUCQE-w8QCszZTAy"  # رابط الدعوة للقناة
+CHANNEL_LINK = "https://t.me/awstech"  # رابط القناة العامة
 REFERRAL_LINK = "https://t.me/DurovCapsBot?start=YOUR_REFERRAL_CODE"  # الرابط الصحيح للإحالة
 ADMIN_ID = "6169753913"  # معرف الأدمن
 
