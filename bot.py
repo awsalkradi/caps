@@ -4,7 +4,7 @@ import requests
 
 # إعداد المعلومات الأساسية
 TOKEN = "7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk"  # التوكن الخاص بالبوت
-CHANNEL_LINK = "https://t.me/+xUCQE-w8QCszZTAy"  # رابط القناة للاشتراك الإجباري
+CHANNEL_LINK = "https://t.me/+xUCQE-w8QCszZTAy"  # رابط القناة
 REFERRAL_LINK = "https://t.me/DurovCapsBot/caps?startapp=374668608"  # رابط الإحالة
 ADMIN_ID = "6169753913"  # معرف الأدمن
 
@@ -13,10 +13,8 @@ notified_users = set()
 
 # وظيفة التحقق من الاشتراك
 def is_user_subscribed(user_id):
-    url = f"https://api.telegram.org/bot{TOKEN}/getChatMember?chat_id={CHANNEL_LINK}&user_id={user_id}"
-    response = requests.get(url).json()
-    status = response.get("result", {}).get("status", "")
-    return status in ["member", "administrator", "creator"]
+    # التحقق معطل لأنه تم إزالة CHANNEL_ID
+    return False
 
 # وظيفة بدء البوت
 async def start(update: Update, context: CallbackContext):
