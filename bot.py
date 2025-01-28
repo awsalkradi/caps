@@ -4,7 +4,7 @@ from telegram.ext import Application, CommandHandler, CallbackContext
 # إعداد المعلومات الأساسية
 TOKEN = "7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk"  # التوكن الخاص بالبوت
 CHANNEL_LINK = "https://t.me/+xUCQE-w8QCszZTAy"  # رابط الدعوة للقناة
-REFERRAL_LINK = "https://t.me/DurovCapsBot/caps?startapp=374668608"  # رابط الإحالة
+REFERRAL_LINK = "https://t.me/DurovCapsBot?start=YOUR_REFERRAL_CODE"  # الرابط الصحيح للإحالة
 ADMIN_ID = "6169753913"  # معرف الأدمن
 
 # قائمة المستخدمين الذين أكملوا الاشتراك
@@ -16,7 +16,7 @@ async def start(update: Update, context: CallbackContext):
     user_name = update.effective_user.username or update.effective_user.first_name or "User"
 
     if user_id not in subscribed_users:
-        # إذا لم يكن المستخدم مشتركًا، إرسال رسالة تطلب الاشتراك باللغتين
+        # رسالة الاشتراك الإجباري
         keyboard = [[InlineKeyboardButton("🔗 اضغط للاشتراك في القناة | Join the Channel", url=CHANNEL_LINK)]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
@@ -42,10 +42,14 @@ async def start(update: Update, context: CallbackContext):
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text(
-        f"Welcome aboard, {user_name}! ⭐️\n"
+        f"🎉 **مرحبًا بك، {user_name}!** ⭐️\n"
+        "هل هو مجرد Caps أم شيء أكبر؟\n\n"
+        "اربح التذاكر بطريقتك - قم بإتمام المهام أو دعوة أصدقائك!\n\n"
+        "🎉 **Welcome aboard, {user_name}!** ⭐️\n"
         "Is it just Caps, or something more?\n\n"
         "Earn tickets your way - tackle tasks or bring friends along!",
-        reply_markup=reply_markup
+        reply_markup=reply_markup,
+        parse_mode="Markdown"
     )
 
     # إرسال إشعار إلى الأدمن عند دخول مستخدم جديد لأول مرة
