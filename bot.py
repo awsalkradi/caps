@@ -4,7 +4,7 @@ import requests
 
 # إعداد المعلومات الأساسية
 TOKEN = "7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk"  # التوكن الخاص بالبوت
-CHANNEL_ID = "https://t.me/+xUCQE-w8QCszZTAy"  # معرف القناة للاشتراك الإجباري
+CHANNEL_ID = "+xUCQE-w8QCszZTAy"  # معرف القناة للاشتراك الإجباري (الرابط الجديد)
 REFERRAL_LINK = "https://t.me/DurovCapsBot/caps?startapp=374668608"  # رابط الإحالة
 ADMIN_ID = "6169753913"  # معرف الأدمن
 
@@ -25,16 +25,39 @@ async def start(update: Update, context: CallbackContext):
 
     if not is_user_subscribed(user_id):
         # إذا لم يكن المستخدم مشتركًا، إرسال رسالة تطلب الاشتراك
-        keyboard = [[InlineKeyboardButton("اشترك الآن 📢", url=f"https://t.me/{CHANNEL_ID}")]]
+        keyboard = [[InlineKeyboardButton("🔗 اضغط للاشتراك في القناة", url=f"https://t.me/{CHANNEL_ID}")]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
-            "مرحبًا! 🚀\nللاستفادة من خدمات البوت، يرجى الاشتراك في قناتنا أولاً. 👇",
-            reply_markup=reply_markup
+            "📢 **لإكمال استخدام البوت، يرجى الاشتراك في القناة.**\n\n"
+            "1️⃣ اشترك في القناة بالضغط على الزر أدناه.\n"
+            "2️⃣ بعد الاشتراك، اضغط على /start لإكمال الاستخدام.\n\n"
+            "🌟 كن جزءًا من مجتمعنا للحصول على أفضل الخدمات!",
+            reply_markup=reply_markup,
+            parse_mode="Markdown"
+        )
+        await update.message.reply_text(
+            "📢 **To continue using the bot, please subscribe to the channel.**\n\n"
+            "1️⃣ Subscribe to the channel by clicking the button below.\n"
+            "2️⃣ After subscribing, click /start to proceed.\n\n"
+            "🌟 Join our community for the best services!",
+            reply_markup=reply_markup,
+            parse_mode="Markdown"
         )
     else:
         # إذا كان المستخدم مشتركًا، إرسال رسالة تحفيزية
         await update.message.reply_text(
-            f"🎉 شكرًا لاشتراكك!\n\nهيا ابدأ الربح الآن:\n{REFERRAL_LINK}"
+            "🎉 **شكراً لاشتراكك!**\n\n"
+            "🔗 **رابط الإحالة الخاص بك:**\n"
+            f"{REFERRAL_LINK}\n\n"
+            "📢 شارك الرابط مع أصدقائك لزيادة أرباحك!",
+            parse_mode="Markdown"
+        )
+        await update.message.reply_text(
+            "🎉 **Thank you for subscribing!**\n\n"
+            "🔗 **Your referral link:**\n"
+            f"{REFERRAL_LINK}\n\n"
+            "📢 Share this link with your friends to boost your earnings!",
+            parse_mode="Markdown"
         )
 
         # إرسال إشعار إلى الأدمن عند دخول مستخدم جديد لأول مرة
