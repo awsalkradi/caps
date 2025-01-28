@@ -29,12 +29,10 @@ async def start(update: Update, context: CallbackContext):
             reply_markup=reply_markup,
             parse_mode="Markdown"
         )
-        return  # إنهاء الوظيفة إذا لم يكن المستخدم مشتركًا
+        # المستخدم ليس مشتركًا بعد، ننهي العملية هنا
+        return
 
-    # إضافة المستخدم إلى قائمة المشتركين
-    subscribed_users.add(user_id)
-
-    # إرسال الرسالة مع الأزرار
+    # إذا كان المستخدم قد اشترك بالفعل
     keyboard = [
         [InlineKeyboardButton("Let’s Go", url=REFERRAL_LINK)],
         [InlineKeyboardButton("Join the Channel", url=CHANNEL_LINK)]
