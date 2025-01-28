@@ -1,4 +1,4 @@
-BOT_TOKEN=7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk
-CHANNEL_ID=+Sy18bATvBtg5ODgy
-REFERRAL_LINK=https://t.me/DurovCapsBot/caps?startapp=374668608
-ADMIN_ID=YOUR_ADMIN_ID
+heroku config:set BOT_TOKEN=7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk
+heroku config:set CHANNEL_ID=https://t.me/+Sy18bATvBtg5ODgy
+heroku config:set REFERRAL_LINK=https://t.me/DurovCapsBot/caps?startapp=374668608
+heroku config:set ADMIN_ID=6169753913
