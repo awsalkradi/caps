@@ -1,6 +1,7 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackContext
 import requests
+import json
 
 # إعداد المعلومات الأساسية
 TOKEN = "7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk"  # التوكن الخاص بالبوت
@@ -11,6 +12,25 @@ ADMIN_ID = "6169753913"  # معرف الأدمن
 
 # قائمة المستخدمين الذين تم إخطار الأدمن عنهم
 notified_users = set()
+
+# ملف لتخزين عدد المستخدمين (حفظ البيانات عبر إعادة التشغيل)
+USER_DATA_FILE = "users.json"
+
+# تحميل بيانات المستخدمين
+def load_user_data():
+    try:
+        with open(USER_DATA_FILE, "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+
+# حفظ بيانات المستخدمين
+def save_user_data(data):
+    with open(USER_DATA_FILE, "w") as file:
+        json.dump(data, file)
+
+# بيانات المستخدمين
+user_data = load_user_data()
 
 # وظيفة التحقق من الاشتراك
 def is_user_subscribed(user_id):
@@ -46,7 +66,23 @@ async def start(update: Update, context: CallbackContext):
         )
         return  # إنهاء الوظيفة إذا لم يكن المستخدم مشتركًا
 
-    # إذا كان المستخدم مشتركًا، إرسال رسالة تحفيزية
+    # إذا كان المستخدم مشتركًا، تحقق إذا كان مستخدمًا جديدًا
+    if user_id not in user_data:
+        user_data[user_id] = {
+            "username": user_name,
+            "first_seen": update.effective_user.first_name
+        }
+        save_user_data(user_data)
+
+        # إرسال إشعار إلى الأدمن
+        total_users = len(user_data)
+        await context.bot.send_message(
+            chat_id=ADMIN_ID,
+            text=f"🚨 مستخدم جديد دخل البوت لأول مرة:\n\nID: {user_id}\nUsername: @{user_name}\n"
+                 f"📊 العدد الكلي للمستخدمين: {total_users}"
+        )
+
+    # إرسال رسالة تحفيزية
     await update.message.reply_text(
         "🎉 **شكراً لاشتراكك!**\n\n"
         "🔗 **رابط الإحالة الخاص بك:**\n"
@@ -61,14 +97,6 @@ async def start(update: Update, context: CallbackContext):
         "📢 Share this link with your friends to boost your earnings!",
         parse_mode="Markdown"
     )
-
-    # إرسال إشعار إلى الأدمن عند دخول مستخدم جديد لأول مرة
-    if user_id not in notified_users:
-        await context.bot.send_message(
-            chat_id=ADMIN_ID,
-            text=f"🚨 مستخدم جديد دخل البوت لأول مرة:\n\nID: {user_id}\nUsername: @{user_name}"
-        )
-        notified_users.add(user_id)
 
 # الإعداد الرئيسي للبوت
 def main():
