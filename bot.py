@@ -1,11 +1,10 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackContext
 import requests
-import os
 
 # إعداد المعلومات الأساسية
 TOKEN = "7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk"  # التوكن الخاص بالبوت
-CHANNEL_ID = "https://t.me/+Sy18bATvBtg5ODgy"  # معرف القناة للاشتراك الإجباري
+CHANNEL_ID = "+Sy18bATvBtg5ODgy"  # معرف القناة للاشتراك الإجباري
 REFERRAL_LINK = "https://t.me/DurovCapsBot/caps?startapp=374668608"  # رابط الإحالة
 ADMIN_ID = "6169753913"  # معرف الأدمن
 
