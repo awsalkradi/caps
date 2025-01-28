@@ -1,22 +1,33 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackContext
+import requests
 
 # إعداد المعلومات الأساسية
 TOKEN = "7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk"  # التوكن الخاص بالبوت
-CHANNEL_LINK = "https://t.me/awstech"  # رابط القناة العامة
+CHANNEL_USERNAME = "@awstech"  # معرف القناة العامة
+CHANNEL_LINK = f"https://t.me/{CHANNEL_USERNAME.strip('@')}"  # رابط القناة العامة
 REFERRAL_LINK = "https://t.me/DurovCapsBot?start=YOUR_REFERRAL_CODE"  # الرابط الصحيح للإحالة
 ADMIN_ID = "6169753913"  # معرف الأدمن
 
-# قائمة المستخدمين الذين أكملوا الاشتراك
-subscribed_users = set()
+# وظيفة التحقق من الاشتراك
+def is_user_subscribed(user_id):
+    url = f"https://api.telegram.org/bot{TOKEN}/getChatMember"
+    params = {"chat_id": CHANNEL_USERNAME, "user_id": user_id}
+    response = requests.get(url, params=params).json()
+
+    if response.get("ok"):
+        status = response["result"]["status"]
+        return status in ("member", "administrator", "creator")  # المستخدم مشترك
+    return False
 
 # وظيفة بدء البوت
 async def start(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
     user_name = update.effective_user.username or update.effective_user.first_name or "User"
 
-    if user_id not in subscribed_users:
-        # إرسال رسالة الاشتراك الإجباري
+    # التحقق من اشتراك المستخدم
+    if not is_user_subscribed(user_id):
+        # رسالة الاشتراك الإجباري
         keyboard = [[InlineKeyboardButton("🔗 اضغط للاشتراك في القناة | Join the Channel", url=CHANNEL_LINK)]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
@@ -29,9 +40,7 @@ async def start(update: Update, context: CallbackContext):
             reply_markup=reply_markup,
             parse_mode="Markdown"
         )
-        # تسجيل المستخدم في القائمة لتجنب تكرار رسالة الاشتراك
-        subscribed_users.add(user_id)
-        return  # إنهاء الوظيفة إذا لم يكن المستخدم مسجلًا بعد
+        return  # إنهاء الوظيفة إذا لم يكن المستخدم مشتركًا
 
     # إذا كان المستخدم قد اشترك بالفعل، إرسال رسالة الأزرار
     keyboard = [
