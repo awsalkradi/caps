@@ -1,4 +1,3 @@
-import json
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackContext
 
@@ -8,47 +7,12 @@ CHANNEL_LINK = "https://t.me/awstech"
 REFERRAL_LINK = "https://t.me/DurovCapsBot?start=YOUR_REFERRAL_CODE"
 ADMIN_ID = "6169753913"
 
-# ملف تخزين المستخدمين
-USERS_FILE = "subscribed_users.json"
-
-# تحميل المستخدمين من ملف JSON
-def load_users():
-    try:
-        with open(USERS_FILE, "r") as file:
-            return set(json.load(file))
-    except FileNotFoundError:
-        return set()
-
-# حفظ المستخدمين في ملف JSON
-def save_users(users):
-    with open(USERS_FILE, "w") as file:
-        json.dump(list(users), file)
-
-# قائمة المستخدمين
-subscribed_users = load_users()
-
 # وظيفة بدء البوت
 async def start(update: Update, context: CallbackContext):
-    user_id = str(update.effective_user.id)  # استخدام str لضمان التوافق مع JSON
+    user_id = update.effective_user.id
     user_name = update.effective_user.username or update.effective_user.first_name or "User"
 
-    if user_id not in subscribed_users:
-        # إرسال رسالة الاشتراك الإجباري
-        keyboard = [[InlineKeyboardButton("🔗 اضغط للاشتراك في القناة | Join the Channel", url=CHANNEL_LINK)]]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text(
-            "📢 **لإكمال استخدام البوت، يرجى الاشتراك في القناة.**\n"
-            "1️⃣ اضغط على الزر أدناه للانضمام إلى القناة.\n"
-            "2️⃣ بعد الانضمام، اضغط على /start لإكمال الاستخدام.\n\n"
-            "📢 **To continue using the bot, please subscribe to the channel.**\n"
-            "1️⃣ Click the button below to join the channel.\n"
-            "2️⃣ After joining, click /start to proceed.",
-            reply_markup=reply_markup,
-            parse_mode="Markdown"
-        )
-        return
-
-    # إذا كان المستخدم قد اشترك بالفعل
+    # رسالة الأزرار
     keyboard = [
         [InlineKeyboardButton("Let’s Go", url=REFERRAL_LINK)],
         [InlineKeyboardButton("Join the Channel", url=CHANNEL_LINK)]
@@ -66,14 +30,10 @@ async def start(update: Update, context: CallbackContext):
         parse_mode="Markdown"
     )
 
-    # تسجيل المستخدم في القائمة وحفظه
-    subscribed_users.add(user_id)
-    save_users(subscribed_users)
-
-    # إرسال إشعار للأدمن
+    # إرسال إشعار للأدمن عند دخول مستخدم جديد
     await context.bot.send_message(
         chat_id=ADMIN_ID,
-        text=f"👤 مستخدم جديد اشترك: @{user_name} (ID: {user_id})"
+        text=f"👤 مستخدم جديد دخل البوت: @{user_name} (ID: {user_id})"
     )
 
 # الإعداد الرئيسي للبوت
