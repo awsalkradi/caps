@@ -15,9 +15,9 @@ async def start(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
     user_name = update.effective_user.username or update.effective_user.first_name or "User"
 
-    # إذا كان المستخدم غير مسجل
+    # التحقق مما إذا كان المستخدم جديدًا
     if user_id not in subscribed_users:
-        # عرض رسالة الاشتراك الإجباري
+        # رسالة الاشتراك الإجباري
         keyboard = [[InlineKeyboardButton("🔗 اضغط للاشتراك في القناة | Join the Channel", url=CHANNEL_LINK)]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
@@ -30,9 +30,8 @@ async def start(update: Update, context: CallbackContext):
             reply_markup=reply_markup,
             parse_mode="Markdown"
         )
-        # تسجيل المستخدم كأنه أكمل الاشتراك لتجنب التكرار
-        subscribed_users.add(user_id)
-        return  # إنهاء الوظيفة إذا لم يكن المستخدم مشتركًا
+        # تسجيل المستخدم مؤقتًا لتجنب تكرار رسالة الاشتراك
+        return  # إنهاء الوظيفة هنا إذا لم يكن المستخدم مشتركًا
 
     # إذا كان المستخدم مشتركًا بالفعل، عرض رسالة الأزرار
     keyboard = [
@@ -51,6 +50,9 @@ async def start(update: Update, context: CallbackContext):
         reply_markup=reply_markup,
         parse_mode="Markdown"
     )
+
+    # تسجيل المستخدم في القائمة بعد عرض رسالة الأزرار
+    subscribed_users.add(user_id)
 
 # الإعداد الرئيسي للبوت
 def main():
