@@ -17,7 +17,7 @@ async def start(update: Update, context: CallbackContext):
 
     # التحقق مما إذا كان المستخدم جديدًا
     if user_id not in subscribed_users:
-        # رسالة الاشتراك الإجباري
+        # عرض رسالة الاشتراك الإجباري
         keyboard = [[InlineKeyboardButton("🔗 اضغط للاشتراك في القناة | Join the Channel", url=CHANNEL_LINK)]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
@@ -30,10 +30,9 @@ async def start(update: Update, context: CallbackContext):
             reply_markup=reply_markup,
             parse_mode="Markdown"
         )
-        # تسجيل المستخدم مؤقتًا لتجنب تكرار رسالة الاشتراك
         return  # إنهاء الوظيفة هنا إذا لم يكن المستخدم مشتركًا
 
-    # إذا كان المستخدم مشتركًا بالفعل، عرض رسالة الأزرار
+    # إذا كان المستخدم مسجلًا كمشترك، عرض رسالة الأزرار
     keyboard = [
         [InlineKeyboardButton("Let’s Go", url=REFERRAL_LINK)],
         [InlineKeyboardButton("Join the Channel", url=CHANNEL_LINK)]
