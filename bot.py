@@ -8,7 +8,7 @@ CHANNEL_LINK = "https://t.me/awstech"
 REFERRAL_LINK = "https://t.me/DurovCapsBot?start=YOUR_REFERRAL_CODE"
 ADMIN_ID = "6169753913"
 
-# اسم ملف تخزين المستخدمين
+# ملف تخزين المستخدمين
 USERS_FILE = "subscribed_users.json"
 
 # تحميل المستخدمين من ملف JSON
@@ -29,11 +29,11 @@ subscribed_users = load_users()
 
 # وظيفة بدء البوت
 async def start(update: Update, context: CallbackContext):
-    user_id = str(update.effective_user.id)  # استخدام str لتجنب مشاكل JSON
+    user_id = str(update.effective_user.id)  # استخدام str لضمان التوافق مع JSON
     user_name = update.effective_user.username or update.effective_user.first_name or "User"
 
-    # إذا كان المستخدم جديدًا
     if user_id not in subscribed_users:
+        # إرسال رسالة الاشتراك الإجباري
         keyboard = [[InlineKeyboardButton("🔗 اضغط للاشتراك في القناة | Join the Channel", url=CHANNEL_LINK)]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
@@ -66,9 +66,15 @@ async def start(update: Update, context: CallbackContext):
         parse_mode="Markdown"
     )
 
-    # تسجيل المستخدم في القائمة بعد عرض رسالة الأزرار
+    # تسجيل المستخدم في القائمة وحفظه
     subscribed_users.add(user_id)
     save_users(subscribed_users)
+
+    # إرسال إشعار للأدمن
+    await context.bot.send_message(
+        chat_id=ADMIN_ID,
+        text=f"👤 مستخدم جديد اشترك: @{user_name} (ID: {user_id})"
+    )
 
 # الإعداد الرئيسي للبوت
 def main():
