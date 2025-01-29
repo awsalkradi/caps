@@ -1,23 +1,38 @@
+import json
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackContext
 
 # إعداد المعلومات الأساسية
-TOKEN = "7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk"  # التوكن الخاص بالبوت
-CHANNEL_LINK = "https://t.me/awstech"  # رابط القناة العامة
-REFERRAL_LINK = "https://t.me/DurovCapsBot?start=YOUR_REFERRAL_CODE"  # الرابط الصحيح للإحالة
-ADMIN_ID = "6169753913"  # معرف الأدمن
+TOKEN = "7960611747:AAF__2eag5N3R-5tLiy6Myq3rrNUOqzelWk"
+CHANNEL_LINK = "https://t.me/awstech"
+REFERRAL_LINK = "https://t.me/DurovCapsBot?start=YOUR_REFERRAL_CODE"
+ADMIN_ID = "6169753913"
 
-# قائمة المستخدمين الذين أكملوا الاشتراك
-subscribed_users = set()
+# ملف لتخزين المستخدمين
+USERS_FILE = "subscribed_users.json"
+
+# تحميل المستخدمين من الملف
+def load_users():
+    try:
+        with open(USERS_FILE, "r") as file:
+            return set(json.load(file))
+    except FileNotFoundError:
+        return set()
+
+# حفظ المستخدمين إلى الملف
+def save_users(users):
+    with open(USERS_FILE, "w") as file:
+        json.dump(list(users), file)
+
+# قائمة المستخدمين
+subscribed_users = load_users()
 
 # وظيفة بدء البوت
 async def start(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
     user_name = update.effective_user.username or update.effective_user.first_name or "User"
 
-    # التحقق مما إذا كان المستخدم جديدًا
     if user_id not in subscribed_users:
-        # عرض رسالة الاشتراك الإجباري
         keyboard = [[InlineKeyboardButton("🔗 اضغط للاشتراك في القناة | Join the Channel", url=CHANNEL_LINK)]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(
@@ -30,9 +45,9 @@ async def start(update: Update, context: CallbackContext):
             reply_markup=reply_markup,
             parse_mode="Markdown"
         )
-        return  # إنهاء الوظيفة هنا إذا لم يكن المستخدم مشتركًا
+        return
 
-    # إذا كان المستخدم مسجلًا كمشترك، عرض رسالة الأزرار
+    # إذا كان المستخدم قد اشترك بالفعل
     keyboard = [
         [InlineKeyboardButton("Let’s Go", url=REFERRAL_LINK)],
         [InlineKeyboardButton("Join the Channel", url=CHANNEL_LINK)]
@@ -50,18 +65,14 @@ async def start(update: Update, context: CallbackContext):
         parse_mode="Markdown"
     )
 
-    # تسجيل المستخدم في القائمة بعد عرض رسالة الأزرار
+    # تسجيل المستخدم
     subscribed_users.add(user_id)
+    save_users(subscribed_users)
 
 # الإعداد الرئيسي للبوت
 def main():
-    # إنشاء تطبيق البوت
     application = Application.builder().token(TOKEN).build()
-
-    # إضافة وظيفة /start
     application.add_handler(CommandHandler("start", start))
-
-    # تشغيل البوت
     application.run_polling()
 
 if __name__ == "__main__":
