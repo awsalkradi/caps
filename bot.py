@@ -8,10 +8,10 @@ CHANNEL_LINK = "https://t.me/awstech"
 REFERRAL_LINK = "https://t.me/DurovCapsBot?start=YOUR_REFERRAL_CODE"
 ADMIN_ID = "6169753913"
 
-# ملف لتخزين المستخدمين
+# اسم ملف تخزين المستخدمين
 USERS_FILE = "subscribed_users.json"
 
-# تحميل المستخدمين من الملف
+# تحميل المستخدمين من ملف JSON
 def load_users():
     try:
         with open(USERS_FILE, "r") as file:
@@ -19,7 +19,7 @@ def load_users():
     except FileNotFoundError:
         return set()
 
-# حفظ المستخدمين إلى الملف
+# حفظ المستخدمين في ملف JSON
 def save_users(users):
     with open(USERS_FILE, "w") as file:
         json.dump(list(users), file)
@@ -29,9 +29,10 @@ subscribed_users = load_users()
 
 # وظيفة بدء البوت
 async def start(update: Update, context: CallbackContext):
-    user_id = update.effective_user.id
+    user_id = str(update.effective_user.id)  # استخدام str لتجنب مشاكل JSON
     user_name = update.effective_user.username or update.effective_user.first_name or "User"
 
+    # إذا كان المستخدم جديدًا
     if user_id not in subscribed_users:
         keyboard = [[InlineKeyboardButton("🔗 اضغط للاشتراك في القناة | Join the Channel", url=CHANNEL_LINK)]]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -65,7 +66,7 @@ async def start(update: Update, context: CallbackContext):
         parse_mode="Markdown"
     )
 
-    # تسجيل المستخدم
+    # تسجيل المستخدم في القائمة بعد عرض رسالة الأزرار
     subscribed_users.add(user_id)
     save_users(subscribed_users)
 
