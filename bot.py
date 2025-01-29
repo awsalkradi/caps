@@ -59,13 +59,18 @@ async def start(update: Update, context: CallbackContext):
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    await update.message.reply_text(
-        f"🎉 **مرحبًا بك، {user_name}!** ⭐️\n"
+    # استخدام التنسيق السليم في الرسالة
+    message = (
+        f"🎉 **مرحبًا بك، {user_name}!** ⭐️\n\n"
         "هل هو مجرد Caps أم شيء أكبر؟\n\n"
         "اربح التذاكر بطريقتك - قم بإتمام المهام أو دعوة أصدقائك!\n\n"
-        "🎉 **Welcome aboard, {user_name}!** ⭐️\n"
+        "🎉 **Welcome aboard, {user_name}!** ⭐️\n\n"
         "Is it just Caps, or something more?\n\n"
-        "Earn tickets your way - tackle tasks or bring friends along!",
+        "Earn tickets your way - tackle tasks or bring friends along!"
+    )
+
+    await update.message.reply_text(
+        message,
         reply_markup=reply_markup,
         parse_mode="Markdown"
     )
